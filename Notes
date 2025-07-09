@@ -1,0 +1,1230 @@
+Here we are going to build an e-commerce application
+
+
+There will be 3 layers:
+- Controller layer - intercepts the request from the user.
+- Service Layer - Has business logic
+- Repository Layer - Communicates with the database if needed.
+
+
+1. We are going to build category module.
+
+2. Going to build the API
+
+3. He is having a clear table with the columns API Name, EndPoint, Method, Purpose, Request Body, Request Parameters, Response
+
+IMPORTANT
+
+4. Designing an API?
+
+- The name of the API is very important here becasue we need to orgainze to properly inorder to understand what the API does.
+- For example, take the API for creating something in the db, /api/admin/category. This API means only people with admin
+    access can create a category instead of a user creating it.
+- Here in this API, /api/users/categories. This is to retrieve all the categories from the db which can be viewed by all.
+- This will be really helpful.
+
+5. Now we are going to start working on our application
+   - We are first going to concentrate on the category module.
+   - We first create a package for the controllers and put the category controller inside it.
+   - We also need to create Model, which is used to represent a module such as category.
+
+6. Creating Category Model:
+
+- This is used to represent what the category is.
+- Used to contain the member variables and getters and setters and constructors.
+
+7. IMPORTANT:
+
+- Make sure that everything the controller, the model is inside the same package as of the main
+
+8. We now created post mapping to create new activities.
+
+9. Now we are creating the service layer
+- In Service layer, we are going to store all the business logic of the category and everything
+- Now we are moving all the business logic from the controller to the service layer.
+
+
+10. Now we are making the categoryId independent of the user becasue until now we had depended on the user to send it.
+- Now we use a temporary vairable to store the previous id and assign the next id to the new category being added.
+
+11. Now we are going to delete a particular category with the help of the id passed by the user.
+- Create an endpoint in the controller.
+- Create the service
+- DO validation
+- Here we need to get the object from the array list, so we use streams and use filter to get only the needed object.
+
+12. Now we are going to see about the response entity class:
+
+- When we return a message saying the given id is not found, we get API code as 200 OK
+- But it should not be, we need to control the response code manually.
+- For this we need to make use of ResponseEntity wrapper.
+- First we need to handle it in the service layer and throw an exception instead of storing null in the category.
+- We can catch that exception in the contorller and send the neeeded response code and message to the user.
+- Inorder to send the response code, we need to use Response entity.
+- We are also changing all the return types.
+
+13. Now we are going to update a category:
+
+- To update a category, client will provide both the client id and the category object to update.
+- We need to find the category with the help of given category id.
+- Using the setter and getter we can update the category datas.
+- If not found we can return an error.
+
+14. Small recap and the things needed for each REST operation:
+
+- For Creating:
+
+    - We use POST method to create a new object.
+    - We need the object to be passed from the client to create it.
+    - Business logic will be in the service layer, where the given object will be added to the database.
+    - We can return the message.
+    - There is no need for error response maybe if the same id present we can update it rather than creating it new.
+
+- For Getting:
+
+    - We can use GETMAPPING.
+    - We need the object id to get the individual object.
+    - We dont need anything to get all the objects.
+    - Create an endpoint in the controller and use service layer.
+    - We can return the object directly.
+
+- For Deleting:
+
+    - We can use DELETEMAPPING.
+    - For this we need the object id to be deleted.
+    - In the service layer, we should get the appropriate object.
+    - We can use stream and filter the list and match the given id with all the ids present in the list.
+    - We can use elseThrow to throw an excpetion if the id is not present and we can catch this exception in the
+        controller.
+    - We can then using remove the object and return the message with the status code.
+
+- For Updating:
+
+    - We can use PUTMAPPING.
+    - We need the object id and the updated object.
+    - In service layer we can get the object using the id.
+    - We can use OPTIONAL to get the particular object and so we can use isPresent() to check if the object is present
+        and update it using the getter and setter.
+    - If not present we can send error status code.
+
+
+15. REQUEST MAPPING:
+
+- In the class level, REQUESTMAPPING is used to mention that this contorller will handle all the endpoints starting
+    with a particular pattern.
+- In the method level, instead of using get mapping, post mapping and others, we can use request mapping with the
+    parameters value for the endpoint and method for the get or post or put or delete.
+
+
+16. Saw what is meant by ORM?
+
+- Object Relational Mapping.
+- Representing objects in terms of tables in databases.
+
+17. Now we are going to work with the Database.
+
+- First we will install some dependencies in the pom.xml file
+- We then mention the connection in the configuration file.
+- Then for the url not to change dynamically we mentioned a static url
+
+18. ENTITY Annotation?
+
+- It is an annotation to mention a model class as an entity in the database.
+- This means that the particular class should be represented as a table in the database.
+- We use @entity in the class and @id to mention the primary key.
+- We can check this out in the h2-console.
+
+19. We normally want the database to create the own primary key rather than the application creating. For this
+    we use annotation called @GeneratedValue ( strategy = GenerationType.IDENTITY)
+
+20.  Now we are going to work with the repositories
+- We create a repository for category
+- We create an interface for the repository
+- There are two types of repository
+    - CRUDRepository
+    - JPARepository - extension of CRUD and contains more methods
+- Now we are going to change the implementation in the service layer.
+- Until now we had used list but from now on we use repository to store, fetch, delete datas.
+
+21. Optimizing the update and delete services.
+
+- Before we used to fetch all the categories.
+- Store it as a list
+- Convert it into stream and filter.
+- But now wee can use findbyid and store the category if it exists or null
+- Do the process.
+
+22. We now saw about Lombok.
+- It is used to reduce the amount of boilerplate to write.
+- We can make use of annotations for this to happen
+
+// Let me have this project on hold and i can only continue if full course has been brought.
+
+// Guess what I bought the course HaHa.. Lets continue and finish this off and get a co-op.
+
+//////////////////////////////////
+23. VALIDATIONS In Spring Boot:
+
+- Validations in Spring Boot is about ensuring the data our application receives meets certain criteria before its
+    processed.
+- Validations are provided by JAKARTA
+- Validations are best used with the help of annotations which are used directly in the model / entity class.
+- Some of the annotations are,
+    - @NotNull
+    - @NotEmpty
+    - @Size(min=x, max=y)
+    - @Email
+    - @Min(value) and @Max(value)
+
+24. Now we are adding the validation dependency in our application.
+- We use spring initializer to add the dependency
+- We use @NotBlank in the Model / Entity for the name.
+- Along with the model level validation, we can also use the validation in the controller.
+- If not used, if the incoming data does not meet the needed constraint then it will return a 500 internal server error
+    which is not user friendly. ***
+- To make it more user friendly, we make use of validation in the controller.
+- For this we use @valid annotation along with the request body.
+- Now it will give 400 bad request error rather than internal server error
+
+
+25. Creating a global handling of exception:
+- Even though we use the valid annotation and return a user friendly error, we can still improve this.
+- We can make of handling exceptions globally.
+- Whatever the exception is thrown from the service layer, we can use this class to handle it.
+- For this we need to declare the class with the annotation //@RestControllerAdvice// to tell Spring that this is a class
+    which you should come to handle the exception.
+- We are going to handle the methodNotValidArgumentException, this will arise when not a valid data is passed.
+- We use the annotation //@ExceptionHandler// annotation above the method
+- Handling exceptions globally will make the application more consistent and when a new developer is working, this
+    will make their job more easier.
+- To maintain consistency, we use response entity to return.
+- We can also use custom messages to be sent.
+
+26. Now we can add more validations to our application
+- Suppose we are adding another validation to our category name which is to have min length of 5 characters.
+- Here if this fails it will also invoke the methodNotValidArgumentException
+- And this will return a default message.
+- This default message can sometimes be not understandable.
+- So we use another argument within the validation annotation called //message using which we can send custom messages.
+
+27. Why we need Custom Exception over ResponseStatusException?
+- Custom exception provides
+    - Separation of Concerns
+    - Consistency and Reusability
+    - Detailed error information
+    - Complex error handling logic
+
+28. Now we are creating a custom exception class for Resource Not found
+- This is actually used to standardize the error thrown.
+- Before this we handle this in the Service layer when a particular resource is not found in the db
+- We now create a custom exception class for this because this is not built in.
+- In the service layer we thrown the resource not found errors and it was handled by the exception class.
+- In this way we can generalize or standardize the error thrown
+- This will be very much useful when HANDLING THE ERRORS IN THE FRONTEND.
+
+29. Now we are going to implement API Exception
+- This exception is something used when the data passed through the API breaks the constraints.
+- Let the constraint be, I dont want to have two categories with the same name.
+- This should be handled.
+- How can this be handled?
+- We can make use of the custom exception class.
+- We can implement the validation when creating a new category in the db using the service layer.
+- First lets create a custom exception class.
+- Add that class in the global exceptions.
+- Then when a category is passed in the service layer, we can fetch the category with the help of its name.
+- By default there doesnt exist a query to fetch by name, so we can implement our own in the repository.
+
+30. Adding Exception when no categories are found
+- We are adding another exception to throw when there are no categories present instead of returning an empty array
+
+
+31. Now we need to clean up the controller
+- Since we have everything handled in the service and if error occurs it is thrown by the Global exception handler.
+- We can clean up the controller, since controller should only have the getting and passing logic and nothing else.
+
+
+//////////////////////////////////////////
+
+PAGINATION AND SORTING
+
+32. What is Pagination and how it works?
+- Pagination is basically used to divide the large datas into small manageable datas.
+- Suppose if the api needs to send millions of data all at once, it wont be efficient.
+- For this we use pagination.
+- The request URI from the client will contain argument in the URI.
+- The argument are pageNumber and pageLimit
+- The return response from the server will be number of datas mentioned in the page limit along with metadatas such as
+    pageNumber, pageSize, totalElements, totalPages and lastPage.
+- Using the meta data, the frontend can be process the datas and show it to the user efficiently.
+
+33. Why DTO's are used?
+- In our current scenario, we want to add pagination to our application.
+- How to add the pagination?
+- In order to add pagination, we need to return some datas as a response to the client such as pagination meta data.
+- Basically our response to the user are the fields in the model.
+- Our model represents the structure of the datas in the database.
+- If we touch the model and add the pagination meta data, it will also be reflected in the db.
+- Consider another scenario, what if we have password field stored in the db.
+- Should we return it to the client along with other information? NO
+- For these scenarios, we use DTOs - Data Transfer Object
+- They are custom response which is returned to the client.
+- It also separate the concern of the model handling both the structure of storage in the db and the visual representation
+    format in the front end.
+
+34. What is DTO Pattern?
+- Design pattern which is used to transfer data between software application subsystems.
+- The below explains the process of how it works.
+- The client will request with DTO
+- In the server the DTO is converted into Entity.
+- The Entity communicates with the Database.
+- Data is passed to the server
+- The Entity is converted into DTO
+- The DTO is passed as a response to the client
+
+35. Implementing DTO Pattern?
+- Here we are creating a separate package and we have two classes in it.
+- One is CategoryDTO which is similar to Model but not model and it is for the presentation layer
+- Another one is CategoryResponse which is the response which is sent to the client.
+- We make a minor tweaks in the controller and service layer.
+- In returning a list of Category, we will return CategoryResponse
+- What we need to do is, in the getAllCategories, we get a list of category from the db.
+- In order to pass it to the client, we need to convert it into CategoryResponse
+- Here we make use of MODEL MAPPER which is a dependency to be added.
+- We first need to create a configuration class and create a bean for the model mapper.
+- This will help us to convert the List of Category into List of CategoryDTO
+- And then we create an object of Category Response and set it to the List of CategoryDTO.
+- After converting it into suitable format using DTOS, we get
+{
+    "content": [
+        {
+            "categoryId": 1,
+            "categoryName": "Entertainment"
+        }
+    ]
+}
+ but before it was
+ {
+    {
+        "categoryId": 1,
+        "categoryName": "Entertainment"
+    }
+ }
+
+
+36. Implementing DTO for Create Category
+- We are going to modify this inorder to accept a DTO and return a DTO.
+- Since we know how the DTO pattern works,
+- We get a DTO from the client and we convert it to an entity in the Service layer.
+- We perform the operations.
+- We convert the entity into DTO and return it
+
+37. Implementing DTO for Update Category
+- As same as above we modified accordingly
+
+
+38. Implementing DTO for Delete Category
+- As same as above
+
+39. Request Param Annotation:
+- So we know that the client will send the page and limit to the server.
+- But how can we get that parameters from the url.
+- We use @ request param annotation
+- We mention the parameter name and then it will automatically get the value of that parameter.
+- We can give default value for the parameter in order to avoid errors.
+- We can also mention required = false to not throw an error
+- This will be very much useful in the search operation.
+
+40. Pageable and Page Request:
+- Now we are going to implement the business logic to fetch the page and the limit.
+- We use an interface called PAGEABLE to get the details of the pageNumber and pageLimit
+- We then use Page request to request the page
+- Then we use Page to fetch all the needed content from the database
+- We then Store it as a list of categories.
+
+41. Testing the application:
+- We added some datas into the h2 db
+- Now we test the api
+
+42. Now we are going to add the meta datas into the Category Response
+- It is easier to add those meta datas.
+- First in the Category Response Class, add the needed data members
+- Then in the service layer, set the needed contents.
+
+43. Having default page size and page number
+- We are giving default page size and number to avoid errors.
+- Here we are defining a class for constants.
+
+44. Implementing Sorting:
+- We will receive the parameters from the client
+- We give the default values.
+- We pass it to the service.
+- We use sort and sort it by checking whether asc or desc
+
+45. Adding more structure to the String return type when no resource found
+- We create a new class called API response which is used to send a structured response to the user.
+
+
+/////////////////////////////////////////
+
+MULTIPLE ENTITIES AND RELATIONSHIPS WITH JPA
+
+46. Working with multiple entities:
+- As same as database concept, we have one-one, one-many and many-one.
+- We also have something called unidirectional and bidirectional.
+- Unidirectional means one entity references about other entity but not the other way around.
+- For example, student knows which course they are in but the course wont keep track of the students
+- Bidirectional means when both entities references each other.
+- For example, Author knows all the books they had written and the books also knows who the author is.
+- The key difference is that in unidirectional relationships, only one entity can navigate to the other,
+       while in bidirectional relationships, both entities can navigate to each other.
+
+/* NOW WE ARE GOING TO SWITCH TO ANOTHER PROJECT TO LEARN ABOUT RELATIONSHIPS WITH JPA.
+
+
+///////////////////////////////////////////
+
+MANAGING PRODUCTS IN OUR E-COMMERCE APPLICATION
+
+THINGS LEARNT -
+- To upload image to the server
+- We separated file manipulation into a separate class
+
+
+47. Understanding Product Module
+- We saw a list of API which we are going to build.
+
+48. Setting up Product Module:
+- Here we are creating repository, service and controller for the product.
+- We also create a model and add datas into the model.
+
+48. Setting up DTOs for product:
+- We can have a productDTO which can contain all the fields of the model.
+- We can have a productResponse which contains a List of productDtos.
+
+49. Saving Products to a Category:
+- Here we get the categoryId under which a product should be saved and also the product
+- We create an endpoint in the controller.
+- We calculate the special price by computing the discount with the price.
+- In the service, we get the category with the given id, if not found we throw an exception.
+- We save the category attribute in the product.
+- We also set a dummy image to the product.
+- We save the product in the repo because it is given as entity not as DTO.
+- We then convert the entity into DTO using Model mapper and then return it.
+
+50. Getting all the products:
+- We approach the same method as we done in the category.
+
+51. Getting All the products to a particular Category:
+- Im going to try this.
+- Create an endpoint in the controller.
+- Pass the category id to the service.
+- In Service, maybe we can create a custom fetch query in the repo and get the product by Category.
+- We can convert it into DTO and return it.
+
+52. Getting All the products using a keyword
+- This is like pattern matching.
+- The thing is we need to use % before and after the given keyword.
+
+53. Updating an existing product
+- Trying it on my own.
+
+54. Deleting Product
+- Trying it on my own.
+
+55. Now we are going to update the image to the server:
+- We will send the image from the computer via the postman.
+- We are using Multipart object to get the file from the postman.
+- We are creating a newfolder in the root called image.
+- So we get the product from the db and check whether it exists or else throw exception.
+- We upload the image to the server and we use a helper function to upload the image.
+- We update the product in the db.
+- Save the product
+- Return to the controller.
+- In the upload image helper function,
+- We get the original filename.
+- We create a new unique filename using UUID
+- We get the extension from the original filename
+- We create a new file name using the uuid and the extension.
+- We create the file path.
+- We check if the path exists or else create one
+- We use File object for this and create an instance with the given path argument
+- If the folder does not exist we create one.
+- We use files.copy and copy the original content and paste it in the new folder
+- I'll return the filename back to the calling function.
+
+
+56. Making use of a separate service class for File manipulation
+- Create a new service interface called FileService
+- Create an implementation class for that.
+- Add the helper function.
+- Create a bean in the service class and use this.
+- We are also putting the path in the application.properties to maintain global access.
+
+
+May 4
+
+57. Adding Validation and Custom Exception in our Product:
+- Adding exception in the service layer.
+
+58. Implementing Pagination and Sorting:
+- We are going to try this ourself with the previous knowledge in Category module.
+
+
+///////////////////////////////////////////
+
+SPRING SECURITY - ENTERPRISE GRADE
+
+59. Introduction to Security
+- Spring Security helps us to manage the access to the data in our application.
+- Importance of security:
+    - Privacy protection = Prevents unauthorized access.
+    - Trust = Makes user trust the application if security is present.
+    - Integrity = Will prevent unauthorized modification to the data.
+    - Compliance = There are set of rules that needs to be followed when dealing with user datas.
+- Difference between Authentication and Authorization:
+    - Authentication is all about proving who we are.
+    - Authorization is all about the access we have after getting authentication.
+- Key Security Principles:
+    - Least Privilege - Initially assign everyone with least privilege.
+    - Secure By Design - Think about security when designing, it should not be a after thought.
+    - Fail-Safe Deposit - The system should securely come out of the box without needing additional configuration.
+    - Secure Communication - All the communication should be secure by default.
+    - Input Validation
+    - Auditing and Logging - Every activity should be logged.
+    - Regular Updates and Patch management - Always have the application upto date.
+
+60. How Spring Security Works?
+- Before the controller, there will be another layer of filters.
+- One of the filter is authentication filter.
+- An authentication object is created.
+- The authentication manager takes the object and ask the authentication provider to verify it.
+- Authentication Provider uses PasswordEncoder and userDetailsService to fetch the details and compare the password.
+- If everything matches, authentication provider will confirm and the authentication details are stored in the
+    authentication object.
+- Lastly the Security Context will be populated with the authentication object.
+- Then we are allowed to access the controller.
+- During the request in the controller, the security context is referred to know about the access.
+- In the authentication provider, we use DAO Authentication Provider,this is used when we have a database which contains
+    the user details and then compare it with the provided credentials.
+- There are many providers.
+
+61. Getting Started with spring security:
+- Here we are learning with the a new project.
+- We create a simple controller which displays hello world.
+- Then we check it through the localhost
+- We now add the dependency called Spring Security.
+- Now if we try to access the endpoint in the browser, it will now take us to the login page by default.
+
+62. Understanding the default behaviour of Spring Security:
+- If we have many endpoints in the controller, all the endpoints are authenticated.
+- We will be provided with default user name and password when we run the server.
+- The login page is based on form validation.
+- We also have a logout page which is used to logout of the current session.
+- The password changes everytime.
+
+63. More about Form Based Authentication:
+- We need to copy the password everytime we run the program.
+- But we can define a password which we can use it everytime.
+- This can be done in the properties file.
+
+64. Writing our own Security Filter with Spring Security:
+- Since we use API endpoints, we dont need a form validation.
+- We need custom basic validation, for this we can create our own class.
+- We can also see the code of the form validation by visiting SpringBootWebSecurityConfiguration class.
+- We copy paste the needed code from the security config and we make that class as a bean and also mention it as
+    configuration. We also use the annotation @EnableWebSecurity to mention this has security related information.
+- We took the default mechanism and modified according to our needs.
+
+65. Difference between Form Based vs Basic Authentication:
+- In form based,
+    - We have an explicit form.
+    - There will be a payload passed.
+    - The username and password will be passed through html form.
+- In Basic,
+    - We wont have explicit form.
+    - There will be no payload.
+- Both uses cookies
+
+66. Making Basic Authentication Stateless with Spring Security:
+- By adding one line of code we can make the authentication stateless.
+- This offers many advantages over stateful, such as we dont need to use cookies rather everything is stored in the
+    token.
+- In the security config, we add a line.
+- Now imagine a different theater:
+- You buy a ticket
+- The theater gives you a special ticket with your name, seat number, AND a hard-to-forge holographic stamp
+- The theater doesn't write anything down
+- When you enter, the usher just checks if your ticket has a legitimate holographic stamp and reads your information
+    from the ticket itself
+- This is like stateless authentication:
+- Your ticket (with all the information) is like a JWT token
+- The holographic stamp is like the digital signature on the JWT
+- The server doesn't need to store or look up your session - all the information is in the token itself.
+
+67. Working with Postman with Spring Security:
+- If we are in browser we can enter the username and password in the browser but how do we work with the postman.
+- For that we can provide the username and password information in the authorization tab in the postman. **
+- The provided information is encoded into Base 64 format and transferred using the authorization header.
+
+68. In-Memory Authentication with Spring Security: ***
+- Here we are going to create multiple users with various roles and manage them in the in memory rather than storing
+    it in the database.
+- The users are not persistent and they exists only in the current session.
+- We make use of UserDetailsService to create in memory user details.
+- UserDetailsService will accept argument of type UserDetails, so we need to create object of that type to create users.
+- We can do this in the configuration.
+- We also use {noop} in the password string to tell spring that do not encode it. This is not actually a good practice
+    but we are learning here.
+
+69. Role based Authorization with Spring Security:
+- When building a production grade application, we may want to restrict some endpoints based on the roles assigned to
+    the users.
+- For eg, admin can only able to delete categories but not the users. So we want to restrict it.
+- In before lesson, we created the user. Along with the creation we also assigned roles to them.
+- We can make the role based authorization work with the help of annotation.
+- On top of the endpoint, we can use the annotation, @PreAuthorize("hasRole('USER')"). **
+- This will check the role of the accessing client before executing the method.
+- There is also another annotation called @PostAuthorize.
+- For this we also want to mention the annotation, @EnableMethodSecurity in the configuration file. **
+
+70. Enabling H2 Database with Spring Security:
+- Normally we can add the dependencies and access the h2 database from the console but with spring security in action
+    it is not that easy, we need to do some steps to avoid logging again and again.
+- First we tell the spring to by pass all the request from the url, h2 console.
+- And after we do that, the frames are disabled by default we need to enable it.
+- We also need to disable to csrf to avoid logging again and again.
+- These are the steps that cant be remembered.
+
+71. Transferring to Database to store User Credentials from In Memory Database:
+- Until now we have use in memory to store the user credentials.
+- Now we can transfer it to h2 database.
+- We can also use any other db of our choice.
+- For this instead of using inMemoryUserDetailsManager, we can use JDBCUserDetailsManager.
+- JDBCUserDetailsManager will accept Datasource as an argument and datasource is the db where the users are stored.
+- We can autowire data source. But where the bean is configured? It is automatically configured by Spring Boot by using
+    the config file where we mentioned our data source.
+- Now it will give us error. Why? Because we didnt create a schema where the credentials will be stored.
+- For this, we visit spring security github where we search for users.ddl.
+- We create a new file called schema.sql under the resource folder where we paste the above code.
+- This is created inorder to tell the spring to auto run this sql query every time we restart the application.
+- This is becasue we use h2 database. If we use other database such as sql or postgre, we can once paste this code as
+    query and no need to create the schema again and again.
+
+72. What is hashing and why it is important?
+- Hashing is the process of adding security to the datas passed over the network.
+- Hashing works by encrypting the given string and it is passed. It is then decrypted at the server side.
+- One type of encryption is Bcrypt. It uses Salting.
+- Bcrypt is one of the most famous encryption used.
+- It uses something called salting which is in addition to the given string it attaches as extra string to the
+    given string.
+- The final string is then encrypted.
+- Salting adds more security.
+
+73. Password Encoding and Hashing with Spring Security:
+- Now we store raw password in the database.
+- But it should not be done like that we should encrypt it.
+- We use PasswordEncoder Bean to perform this.
+- In the security config, we create a bean which returns a password encoder.
+- Here we return bcryptpasswordencoder.
+- We can use this bean in the creation of user using UserService.
+
+74. JWT?
+- Without JWT:
+    - No advance feature like expiration time.
+    - Can be decoded easily.
+    - Should we go for custom token system.
+- How JWT Works?
+    - It is similar to the Movie ticket Analogy.
+    - With the help of token the user is authenticated.
+- How token is sent?
+    - It is sent via the authentication header.
+    - Authorization: Bearer<token>
+- The Authoraization header will have three information separated by DOT everything encoded.
+- The first part is the header which tells about the encryption alogrithm used.
+- The second part is about the content.
+- The third part is about the signature which is more of like a secret key.
+
+75. Understanding the implementation:
+- The implementation of JWT can be over whelming.
+- Lets break down the needed things. It contains a series of files creasted for this.
+- JwtUtils:
+    - This is more of a helper class which contains helper methds sch as generating JWSTs, parsing it and validating it.
+    - Include generating a token from a username, validating a JWT and extracting the username from the token.
+    - Think of this analogy.
+    - You go to a club and at the entry they provide you with the wristBand which tells information about the user,
+        expiration time and which areas you can access.
+    - JWT is similar to that.
+    - JWTUtils helps to create the wristband that is the token containing the information about the user, their
+        permission and when the token expires.
+    - It helps us to validate the generated tokens which comes from the request.
+    - It helps us to extract information from the token so the application knows who is making the request and their
+        permission.
+
+- AuthTokenFilter:
+    - In the club analogy, this is the security checkpoint at the entrance of each room in the club. While JwtUtils
+        creates and validates the wristband, auth token filter is the actual bouncer that,
+    - Intercepts every request: It stops every request from the HTTP before they enter the controller.
+    - Checks for the JWT token in the request.
+    - Verifies authenticity: Using JwtUtils to validate the token.
+    - Establishes identity: It sets up security context so the application know who this is.
+    - Makes the final decision: Decides whether to allow it or denies it.
+    - The work flow:
+        - HTTP request comes in.
+        - Auth Token Filter intercepts it
+        - Filter extracts JWT Token from header.
+        - Sends token to utils to validate it.
+        - If valid, sets up security context.
+        - Request continues to the application.
+
+- AuthEntryPoint:
+    - This class handles the formal rejection when the request tires to access the unauthenticated endpoint.
+    - Rather than just denies the entry, it follows a protocol.
+    - It is activated when a request tries to access unauthenticated end point
+    - Provides a proper response explaining why the request was denied.
+    - Set the appropriate status code.
+    - Formats the rejection message.
+
+- Security Config:
+    - This is used to mention about the custom filter used for authentication.
+
+76. Setting up the project:
+- We install the dependencies from jwt github maven because in the spring starter there is no jwt.
+- Under the installation there exists the dependencies, copy and paste in the dependency.
+
+77. Implementing JwtUtils:
+- We create a new package.
+- We create a new JwtUtils class.
+- We need to create a series of methods that handles certain functions.
+- Methods.
+- Need to get JWT from the header.
+- Need to get username from the Token.
+- Need to generate token from the Username.
+- Generate Signing key.
+- Validate JWT Token.
+
+- Method to extract token from the header.
+    - In the request, the token is passed via the header.
+    - The name of the header is Authorization and the value is bearer <Token>
+    - Now this method should extract the token.
+    - For this, we get the request and return the token in string fomat
+    - Get the authorization header.
+    - If header is not null, then return the substring after 7 characters
+    - Else return NULL.
+
+- Method to generate token from the username:
+    - We get the UserDetails.
+    - Extract the username and store it.
+    - Using jwts, build the token by passing the subject which is the username, the issue date, the expiration date,
+        signing with the secret key, compacting into string format.
+
+- Method to extract username from the token:
+    - Here we get th string token.
+    - We use Jwts and put a parser to read the jwt token.
+    - We then verify it using the keys whether it is valid or not.
+    - Then we build the parser.
+    - Now we need to use parseSignedClaims where claims is the payload.
+    - We need to get the payload and then the subject from the payload.
+
+- Method for generating signing key:
+    - This returns security key.
+    - We use Keys.hmacShaKey
+    - We use Base64 decode and pass jwtSecret which we pass from application.properties
+
+- Method to Validate the token:
+    - Here we get the token from the jwtAuthToken to verify whether the token is valid or not.
+    - We use try and catch here.
+    - We parse the given token and verify it with the key.
+    - If it is verified then we return true.
+    - Else that line will throw an exception.
+    - We throw a number of exceptions.
+    - Also we return false.
+
+- Finally we mention the values in the application.properties and use them in the jwt utils class.
+
+
+78. Creating Custom Filter called AuthTokenFilter for Spring Authentication:
+- Here as the analogy says, this is the bouncer which checks every request and decides whether to allow or deny.
+- This class implements oncePerRequestFilter Interface to execute this class once for every request.
+- This will have one method called doFilterInternal which has the request, response and filter chain object.
+- We use try and catch block to execute this.
+- The main purpose of this class is to create the authentication object to put into security context.
+- For this, first we need to get the username.
+- To get the username, first we need to get the token from the request.
+- We use jwtUtil to get the token.
+- Now we check whether the token is valid or not using util.
+- If it is valid we use util to get the username from the token.
+- Then we use UserDetailService to store the details of the user which we got using the username.
+- Now we create the authentication object using the userdetail.
+- We attach the request to the authentication object to add more information.
+- We add the authentication object to the security context.
+- Then we inform spring security to carry on with the other filter layers.
+
+79. Creating AuthEntryPointJwt:
+- This is used to return a formal denial response when an API is unauthorized to access an endpoint.
+- Here we use the inbuilt AuthenticationEntryPoint Interface.
+- We need to execute the default method of this interface.
+- We need to set the content type to JSON.
+- We need to set status code.
+- Now we need to define the errors which we use map to store along with the object.
+- Then we convert it into JSON and display it.
+
+80. Sign-in Flow with JWT and Spring Security:
+- First we need to create the request and response format.
+- Now we need to create an endpoint in the controller which accepts the login request which contains username and
+    password.
+- Now we need to create an authentication object if the authentication is successful.
+- For this we declare the Authentication object.
+- We use try and catch to check whether the authentication is successful.
+- Inside the try block, we get the authentication object if the authentication is successful.
+- We use authenticationManager to authenticate the user.
+- Inside the manager, which accepts the username and password which we pass in the request body
+- Authentication manager is a inbuilt class, which handles the process of authentication.
+- Since in the newer version we can directly access the bean, so in the config class we are creating the bean explicitly.
+- We also use another class called usernamePasswordAuthenticationToken which is used to represent username and password
+    in the spring security.
+- In the catch block we create a map of error and the object and return it.
+- Now after successful authentication, we need to store the authentication object in the security context.
+- Now we need to prepare the response to be sent to the user.
+- Now we can generate the token using the username.
+- For this we can use utils but it will accept only userDetails object and we can create that object using authentication
+    object.
+- Now we should generate the List of roles.
+- We can get the authorities from the authentication object.
+- Now we can get the username from the userDetails.
+- Create the LoginResponse and return it.
+
+81. Managing Security Configuration with Spring Security:
+- We are going to tweak somethings in the security config.
+- First, we are going to make the signin endpoint to be always authenticated like the h2 console becasue in order to
+    check whether a user is authenticated or not, we need to allow the access to the signin endpoint.
+- We also want to mention where the filter should be executed in the number of filters that the spring security has.
+- It is becasue the spring security has many number of inbuilt filter. We need to put our filter in the correct place.
+- We also mention it.
+
+82. Testing Changes of JWT and Spring Security:
+- There is an error coming in the creation of table and inserting the users into it.
+- So for this, we separated the creation of bean and insertion into it.
+- We are using Command Line Runner to initialize Data.
+- We are using this because the insertion happens only after everything is configured.
+
+
+
+------------------------- SUCCESSFULLY COMPLETED JWT & SPRING SECURITY --------------------------------------------
+
+///////////////////////////////////////////
+
+------------------MANAGING USER PROFILES AND ROLES | USER MANAGEMENT FOR SPRING SECURITY ----------------------------
+
+83. How are we going to manage users and their information?
+- We have 3 main tables,
+    - users which contains username, password and email.
+    - roles which contains the roles of the user
+    - addresses which contains the address.
+    - users and roles table are joined by a junction table userRoles.
+    - users and addresses are joined by the junction table userAddresses.
+
+84. Implement Users:
+- Here we are going to create the model for user, role and address.
+- The role will be of type enum and by default the enum is stored as integer in the db, so we need to explicitly mention.
+
+85. Implement Relationships:
+- Now we are going to relate the user table and the role tables.
+- We use @ManyToMany and @JoinTable to establish the relationship.
+
+86. Adding UniqueConstraint attribute:
+- We are going to add unique constraint to the username and email in the user model.
+- This is useful to maintain unique users in the table and to maintain integrity.
+- For this we should mention it in the @Table annotation.
+
+87. Seller side of things:
+- Now we can think of a user being a seller.
+- For this, it is not necessary to have a separate entity as seller.
+- We can make use of the user table and associate the products for the user.
+- We can have a @OneToMany relationship with the product.
+- The owner is the Product table and the non owner is the User table.
+- We use something as Orphan removal in the User table.
+- Orphan removal is a feature in JPA/Hibernate that automatically deletes child entities when they're removed from
+    a parent's collection or when a reference to them is set to null.
+
+88. Implementing Addresses:
+- Lets create the addresses entity.
+
+///////////////////////////////////////////
+
+-------------------------------------Implementing JWT Security in E-Commerce ---------------------------------------
+
+89. Configuring Project to work with JWT:
+- Here we are going to implement the JWT authentication in our e-commerce application.
+- Since we already worked with JWT in a separate project, we are going to copy all the needed files and paste it over
+    here under the package called security.jwt
+- We also need to add the dependencies in the Pom.xml.
+- We also need to add the security secret token and expiration in the configuration file.
+
+90. Understanding UserDetails and UserDetailsService:
+- Understanding both of the above is very crucial in moving forward.
+- UserDetails:
+    - One line explanation is, it is used to represent the core user information.
+    - It is used to represent a single user.
+    - This interface contains methods used to retrieve the information about the user such as username , pswd, roles.
+- Now we are going to customize the UserDetails interface.
+- Why customize if there already exist a UserDetailInterface?
+    - We are customizing because we represent the user in our application in our own way.
+    - There will be a need for certain methods which will not be there in the builtin interface.
+    - If we want to scale further we need to customize it.
+- UserDetailsService:
+    - The work of UserDetails is to represent the user.
+    - But the work of UserDetailsService is the load a particular user data.
+    - We can fetch the user with the help of username.
+    - We are also going to customize this interface.
+
+91. Implementing custom UserDetails:
+- Now we are going to build an adapter class which is used to build a bridge between our own User entity and the
+    spring security.
+- Now we create a new package called services which will provide service to the JWT.
+- Here we implement the UserDetails class in the custom build class.
+- We declare the fields required.
+- Create constructor.
+- We also mention @JsonIgnore on top of password to prevent it from serializing because it is sensitive.
+- We create a builder method which will be used to convert the User object into UserDetails object.
+- Think of this class more of like a translator.
+- It takes the application's way of representing User,
+- And convert it into something that Spring Security understands.
+- This has a build method which,
+    - This takes the application way of representing user.
+    - Convert the roles into authorities.
+    - Creates a new UserDetailsImpl with the user information.
+- We are also overriding the equals method.
+
+92. Implementing custom UserDetailsService:
+- We are going to tell spring that this is the way you need to fetch the user data which will be used for authentication
+    and authorization in my application.
+- When someone logs in this is the first method called to fetch the user details.
+- We implement the builtin UserDetailsService.
+- We override the existing method.
+- The goal of this class is to fetch the user details from the database with the help of username and this method will
+    return the user details in the form of UserDetails so that the Spring Security will understand.
+- We autowire the userRepository.
+- Using the username we fetch the user name which will be in the User Entity.
+- But we need to return it in the form of UserDetails.
+- Here comes the UserDetailsImpl to our rescue.
+- We had already created a build method which is used to convert the User into UserDetails, we make use of that.
+
+93. Implementing UserRepository:
+- Like always we create the repository for User.
+
+94. Managing Security Config:
+- We had already created a security config in the security lecture but here we are going to have a clean and advanced
+    version.
+- We first create a class called WebSecurityConfig.
+
+May 19
+
+95. Overview of Authentication Controller:
+- Here we got to know about the endpoints that should be present in the authentication controller.
+- We have a set of endpoints.
+- For eg, user can signin using post signin endpoint and pass the user information.
+- We can signup, signout, get the current username, get the current user, get all the sellers(useful for admin).
+
+96. Signin Endpoint:
+- Here we are making use of the endpoint we created in the learning lesson of spring security with some modification.
+- We also copy the login request and response class and paste under the security package under different package.
+- We added an extra attribute to the response, we are also sending id along with the response.
+
+97. Signup Endpoint:
+- First we are going to create a model called SignupRequest which user will send to the endpoint.
+- This is nothing but the information needed to create a new user in the database.
+- Now, we need to convert the given signupRequest into user object.
+- But before that we need to perform some set of validation to the username, email and role.
+- For role, it is not compulsory for the user to give.
+- SO for this, we add the validation that checks if the user role is null and assign a default role.
+- Similarly, the request will contain roles in String, we need to convert it into Role object and store it.
+
+98. Creating RoleRepository:
+- We create role repository.
+
+99. Correcting some Loose ends:
+- In the security config we are creating a commandline runner bean to initialize the user database with some dummy datas.
+
+100. Testing Changes:
+- We tested the signin and signup endpoints and it worked correctly.
+- It has some bugs in the start but was able to correct it.
+
+
+Jun 5
+
+101. Working with the Cookies:
+- Now we modify the utils class to work with the cookies.
+- Until now we had used getJwtFromHeader, which gets the token from the header passed from the client.
+- Now we are going to user Cookie for this.
+- We comment out the previous method and add a new method call getJwtFromCookie:
+- What this method does is, it will extract JWT token from the browser cookie with the cookie name given
+- We also need to create another method which will get the JWT from the logged in user name and package it and send
+    as a response with some expiration.
+- We also need to set the path that where this cookie will be accessible.
+- Modify the places where we use these methods
+- Now we modify the way we send response to the client in the controller.
+- We need to set the cookie in the client.
+- Now testing.
+- Until now we pass the authorization in the header, modifying the bearer with the appropriate token to be sent to the
+    backend.
+- Now we remove that.
+- Now we dont need to send the jwt token as a response to the frontend.
+- We can see the cookie in the cookie tab
+- Now we dont want to send the token to the backend everytime when fetching datas.
+- The cookie will be passed along with the API, we dont need to set the authorization headers.
+
+102. Getting Authenticated User Details:
+- Now we are going build endpoints which can be useful in building frontends.
+- These endpoints will give the user details when requested.
+- We create two endpoints, one for getting user name and another for getting user details.
+- The endpoint will get an interface called Authenticate, which has the current authenticated user details and is
+    automatically passed to the function.
+
+103. Sign out from the Session:
+- We need to create an endpoint.
+- Similarly we also need to create a method in the utility method to set the cookie in the client as null.
+- We can sign out.
+
+
+
+----------------------------------------- IMPLEMENTING SHOPPING CART -------------------------------------------
+
+104. Thinking about shopping cart:
+- Allows user to select and store items they wish to purchase.
+- Three different ways to implement shopping cart.
+    - Session based carts: Cart's content are stored in users session. If session expires, data is lost.
+    - Cookie based carts: Data persists but limited and it is also temporary.
+    - Database based carts: Stored within a database. Scalable, secure and provides cart recovery, cross-device access.
+- Here we are going to use database based carts.
+
+105. Designing cart module:
+- We can have a question, how the application knows that it is this user we need to add the cart to?
+- It is with the help of Authentication.
+
+106. Creation of Cart Models:
+- We have two tables.
+- One is store the cart item which is mapped to another table which consists of multiple carts.
+- The cart_item will have information such as cart_item_id, discount, product_price, quantity, cart_id, product_id.
+- The cart will have information such as cart_id, total_price, cart_item_id
+- We have now created the models.
+
+107. Relationships with Cart:
+- Since we added the relation with the product and the user, we also need to mention this information over there.
+
+108. DTOs and Repositories:
+- We are setting up the cartDTO and cartItemDTO which will be useful in sending responses.
+
+109. Adding Product to the Cart:
+- Creating a controller for the cart.
+- Adding an endpoint to add product to the database.
+- This endpoint gets the product id and the quantity.
+- Created the service layer.
+- In service, we need to perform certain steps in adding a product to the cart.
+    - 1. Get the cart associated with the user if not exist create one.
+        - We can use repository to get the cart using the email of the logged in user.
+        - How to get the email?
+        - We are going to create a new class called Auth utils, which gives us the logged in username, email, etc.
+        - Also in the repo, we need to write a custom query because JPA wont create query for nested data. Email exist
+            in User.
+    - 2. Get the product with product ID.
+        - We get the product from the database if exists
+    - 3. Perform validation on the product, check if there exist a product, stock.
+        - First we need to check if the cartItem already exists in the cart.
+        - For this we fetch the cartItem by providing the cartId and the productId.
+        - If exists, throw exception.
+        - Then check if the quantity in the product is 0, throw API exception.
+        - The check if the quantity given is less than the quantity in the product, throw API exception.
+    - 4. Create a new cart item.
+        - Do this.
+    - 5. Save the cart item.
+        - Save the cart.
+        - Update the total price of the cart.
+        - If needed reduce the stocks from the product.
+    - 6. Return the updated cart.
+        - We need to create the cartDTO using model mapperr.
+        - The cartDTO consists of list of Products DTO, so we also need to model map the list also we need to set the
+            the quantity to the number of products in the cart rather than the original quantity of the product.
+
+110. Creating AuthUtils Class:
+- This will enable us to work with the authenticated users.
+- This is a helper class which provides the details of the logged in user.
+- Create a new AuthUtils class
+- We have three methods here, get user email, userId, user
+
+111. Fetching all Carts:
+- We are creating another endpoint which is used to get all the carts of every user present.
+- This endpoint will be helpful to admin in perform any marketing campaigns based on the products in the cart.
+- In service layer, we fetch every cart and also convert every cartItem into a dto simultaneously,
+
+112. Fetching users cart:
+- Now we are creating endpoint to fetch the users cart.
+- We are going to fetch it using users email id and the cart id.
+- This is to ensure scalability in future because we can fetch the users cart with either one.
+- Doing the same thing in the service layer to fetch.
+- We are creating a custom query in the repository.
+
+113. Update Product Quantity in the Cart:
+- We are going to get the productId which is going to updated and a String which indicates the operation of increasing
+    or decreasing.
+- In the Service layer, we first get the cart with the help of emailId.
+- Then we do validations like checking whether the cart exists, then we check whether the product exists.
+- Then check the quantity whether it is available and within the available quantity.
+- Then we get the cartItem using the cartId and productId.
+- Do validation.
+- Update the cartItem.
+- Update the new totalId because of the change in quantity.
+- Do validation, checking whether the quantity goes to 0 then delete the product.
+- Convert it into DTO.
+- We are also using the annotation called @TRANSACTIONAL, to rollback to the starting point if any error occurs.
+
+114. Delete Product from the Cart:
+- We are going to delete the product from the cart using the cart id and the product id.
+- In service layer, we do some validation.
+- Then update the total Price.
+- Then delete the cartItem.
+
+115. What happens if a product is updated or deleted?
+- Suppose if a product is updated. This update has to be reflected in the cart too right.
+- Same applies when a product is deleted.
+- We implement this logic in the product service implementation.
+- We get the cart Items which has the updated product with the help of product id.
+- We convert it into DTO and work with it.
+- We also need to modify the total price.
+- Same applies to when product is deleted, we can use deleteProductFromCart in the cartService.
+
+----------------------------------------- DIFFERENT DATABASES -------------------------------------------
+
+116. Different Databases and Magic of JPA:
+- Here we are going to see how we can work with different types of databases.
+- Spring JPA makes the work very easy because it handles all the working of handling the database.
+- Our only work is to provide the correct configuration in the application.properties and rest is handled by JPA.
+
+--------------------------------- MANAGING USER ADDRESS TO SHIP ORDERS -----------------------------------
+
+117. Setting up DTO and repository:
+- We first setup the DTO by having all the fields from the model.
+- We then setup the repository.
+
+118. Creating Addresses:
+- This is a challenge.
+- First we can create a controller and define the endpoint.
+- In the controller we get the current user and pass it to the service layer
+- It will get the address in the form of DTO and pass it to the service layer.
+- This address is being saved in accordance to the logged in user.
+- We get the list of addresses from the user and add the given address to that list.
+- We save the user repository
+- We also need to make an entry in the address table.
+- Using repository save the address in the database.
+- Doubt is if we add the same address twice, it is adding the same address we should eliminate this in some way.
+
+119. Get all the addresses in the system:
+- Here we need to get all the addresses that exists in the system.
+- Here we need to create an endpoint and return list of addresses.
+- In the service layer, we get the addresses from the repository.
+- We convert it into the list of addressDTO using model mapper and return it.
+
+120. Get address by address ID:
+- Here we create a controller where it gets address id as path parameter
+- Pass it to service layer, get address by id.
+- Return it.
+
+121. Get addresses for a user:
+- Here we get the addresses for the current logged-in user.
+
+122. Updating the user address:
+- Here we are going to update the user address.
+- We will get the address id and the along with that, the address to be updated.
+- We create an endpoint
+- In the service layer, we get the get the address using the address id.
+- Check if the address exists.
+- Update the current address to the existing address.
+- Save it in the database.
+- We also need to update this address in the user side.
+- We first remove the address from the list of address using id.
+- We add the updated address.
+- Return the updated address.
+
+123. Delete the address:
+- Normal deletion with the address id
+
+--------------------------------- MANAGING ORDER AND PAYMENTS -----------------------------------
+
+124. Setting up models for Order Management:
+- This is used to track the order.
+- It includes details such as total amount, order status, orderAddress, order Date, Payment associated with it.
+- We also going to have another model for order Item, which represents the items in an order.
+
+125. Managing Payments:
+- We also wanted to create an entity which represents the payment with information such as payment for an order,
+    payment Method, information from the payment gateway.
+- We are going to use a payment gateway in this application such as Stripe.
+- Here we are also having a custom constructor which is used to create an object without the Order entity which will
+    be used in later scenarios.
+
+126. Setting Up DTOS:
+- Here we are going to have four DTOs such as OrderDTO, OrderItemDTO, OrderRequestDTO, PaymentDTO.
+- These are the formats in which the backend will send response to the frontend.
+- We will be knowing in depth about where these DTOs are used exactly later in the course.
+
+127. Setting up Repositories:
+
+128. Managing Order Placements:
+- Now we need to create an endpoint using which we should place the order.
+- It is a Post mapping.
+- Here the client will send us the payment method and the orderRequest.
+- We need to pass the logged in user email, payment method and all the datas destructured from the orderRequest.
+- When we see the inputs from the client, we cannot find the products they have ordered. It is because the cart is
+    converted into order.
+- First the user will have a cart then the next step is to checkout
+
+129. Managing Order Placement Service Layer:
+- There are series of steps that needs to be followed.
+    - Get the user cart
+    - Create a new Order with the Payment info
+    - Get items from the cart into the order items
+    - Update the product stock
+    - Clear the cart
+    - Return the order summary
+- We mark the service method as transactional.
+
+--------------------------------- DEPLOYING ON AWS -----------------------------------
+
+130. Understanding Deployments:
+- Our Server can be hosted on EC2 which stands for Elastic Cloud Computing and the database can be hosted on RDS
+    which stands Relational Data Service and both are provided by Amazon.
+
+131. Setting up AWS account:
+- We can setup a free aws account and remember to shut it down after using it.
+
+132. Setting up RDS in AWS Console:
+- First we need to configure our application to work with the Postgres database.
+- Then we can create an RDS in the AWS by following the video.
+- I have created my own RDS instance and it is setup.
+
+133. Preparing Spring Boot Application for deployment:
+- We added a line in the application.properties called server.port.
+
+134. Pointing Application to Amazon RDS:
+- Until now the application has pointed to the localhost.
+- Since we have created an RDS instance, the application can now point to the AWS server.
+- Copy the public url from the RDS instance.
+- We now create a new server in the pgadmin.
+- We enter a name and paste the endpoint in the hostname.
+- Enter the password
+
+- I faced some difficulties.
+- I cannot able to connect to the rds instance from my pgAdmin.
+- I solved it by creating a new inbound security group and it worked.
+- Then when i started the application, it was not runnning and it showed that another application is listening to
+    the port 5000.
+- I solved it by turing off the airplay
+
+135. Creating a Jar File:
+- This is needed inorder to deploy the application in the cloud.
+- We are using a single command called ./mvnw package
+
+136. Deploying Apis in the Elastic Beanstalk:
+- Beanstalk is a wrapper around EC2 instance.
+
+137. Testing Live Application:
+- We copied the url and tested it with Postman and it was working correctly.
